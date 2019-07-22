@@ -17,7 +17,8 @@ class NovelSpider(scrapy.Spider):
         # 'http://www.quanshuwang.com/list/1_8.html',
         # 'http://www.quanshuwang.com/list/1_9.html',
         # 'http://www.quanshuwang.com/list/1_10.html',
-        'http://www.quanshuwang.com/book/115/115724',
+        # 'http://www.quanshuwang.com/book/115/115724',
+        'http://www.quanshuwang.com/book/165/165601',
     ]
 
     def parse(self, response):

@@ -7,39 +7,71 @@
 
 import os
 import pymysql
+from Fiction.MysqlHelper import MysqlHelper
 
 
 class FictionPipeline(object):
     def __init__(self):
-        # connection database
-        self.connect = pymysql.connect('localhost', 'root', '123456', 'test')  # 后面三个依次是数据库连接名、数据库密码、数据库名称
-        # get cursor
-        self.cursor = self.connect.cursor()
-        print("连接数据库成功")
+
+        self.db = MysqlHelper()
 
     def process_item(self, item, spider):
         print("开始输入数据")
         try:
 
             # sql为你的查询语句
-            sql = "SELECT id FROM test_novel WHERE `chapter_name` = %s"
-            self.cursor.execute(sql, (item["chapter_name"]))
-            result = self.cursor.fetchone()
+            sql = "SELECT id FROM test_novel WHERE `chapter_name` = %s limit 1"
+            result = self.db.find(sql, item["chapter_name"])
 
             if result == None:
-                self.cursor.execute(
-                    "insert into test_novel(chapter_num, `name`, chapter_name, chapter_content) values (%s, %s, %s, %s)",
-                    (item['chapter_num'], item['name'], item['chapter_name'], item['chapter_content']))
+                sql = "insert into test_novel(chapter_num, `name`, chapter_name, chapter_content) values (%s, %s, %s, %s)"
+                params = (item['chapter_num'], item['name'], item['chapter_name'], item['chapter_content'])
+                self.db.cud(sql, params)
+
             else:
                 ids = result[0]
-                self.cursor.execute(
-                    "update test_novel set `name` = %s, chapter_name = %s, chapter_content = %s where id= %s",
-                    (item['name'], item['chapter_name'], item['chapter_content'], ids))
-            self.connect.commit()
+                sql = "update test_novel set `name` = %s, chapter_name = %s, chapter_content = %s where id= %s"
+                params = (item['name'], item['chapter_name'], item['chapter_content'], ids)
+                self.db.cud(sql, params)
+
         except Exception as error:
             # print error
             print(error)
         return item
+
+    # TODO 第二次优化
+
+    # def __init__(self):
+    #
+    #     # connection database
+    #     self.connect = pymysql.connect('localhost', 'root', '123456', 'test')  # 后面三个依次是数据库连接名、数据库密码、数据库名称
+    #     # get cursor
+    #     self.cursor = self.connect.cursor()
+    #     print("连接数据库成功")
+    #
+    # def process_item(self, item, spider):
+    #     print("开始输入数据")
+    #     try:
+    #
+    #         # sql为你的查询语句
+    #         sql = "SELECT id FROM test_novel WHERE `chapter_name` = %s"
+    #         self.cursor.execute(sql, (item["chapter_name"]))
+    #         result = self.cursor.fetchone()
+    #
+    #         if result == None:
+    #             self.cursor.execute(
+    #                 "insert into test_novel(chapter_num, `name`, chapter_name, chapter_content) values (%s, %s, %s, %s)",
+    #                 (item['chapter_num'], item['name'], item['chapter_name'], item['chapter_content']))
+    #         else:
+    #             ids = result[0]
+    #             self.cursor.execute(
+    #                 "update test_novel set `name` = %s, chapter_name = %s, chapter_content = %s where id= %s",
+    #                 (item['name'], item['chapter_name'], item['chapter_content'], ids))
+    #         self.connect.commit()
+    #     except Exception as error:
+    #         # print error
+    #         print(error)
+    #     return item
 
     # TODO 转换text 文件
     # curPath = '全书网小说'

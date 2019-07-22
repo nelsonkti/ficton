@@ -88,3 +88,10 @@ ITEM_PIPELINES = {
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+MYSQL_HOST = 'localhost'
+MYSQL_DBNAME = 'test'         #数据库名字，请修改
+MYSQL_USER = 'root'             #数据库账号，请修改
+MYSQL_PASSWD = '123456'         #数据库密码，请修改
+
+MYSQL_PORT = 3306               #数据库端口，在dbhelper中使用
